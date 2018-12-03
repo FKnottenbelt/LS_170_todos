@@ -2,15 +2,22 @@ ENV["RACK_ENV"] = "test"
 
 require 'minitest/autorun'
 require 'capybara/minitest'
-require 'tilt/erb'
 
 require_relative '../todo.rb'
 
-Capybara.app = Sinatra::Application
-
-class TodoTest < Minitest::Test
+class CapybaraTestCase < Minitest::Test
   include Capybara::DSL
   include Capybara::Minitest::Assertions
+
+  Capybara.app = Sinatra::Application
+
+  def teardown
+    Capybara.reset_sessions!
+    Capybara.use_default_driver
+  end
+end
+
+class TodoTest < CapybaraTestCase
 
   def test_homepage_redirects_to_lists
     visit '/'
