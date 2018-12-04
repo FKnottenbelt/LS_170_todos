@@ -21,15 +21,20 @@ get "/lists" do
   erb :lists, layout: :layout
 end
 
+def error_for_list_name(list_name)
+  if !list_name.size.between?(1,100)
+    "List name must by between 1 and 100 characters"
+  elsif session[:lists].any? { |list| list[:name] ==  list_name }
+    "List name must be unique"
+  end
+end
+
 # Create a new list
 post "/lists" do
   new_list_name = params[:list_name].strip
 
-  if !new_list_name.size.between?(1,100)
-    session[:error] = "List name must by between 1 and 100 characters"
-    erb :new_list, layout: :layout
-  elsif session[:lists].any? { |list| list[:name] ==  new_list_name }
-    session[:error] = "List name must be unique"
+  if error = error_for_list_name(new_list_name)
+    session[:error] = error
     erb :new_list, layout: :layout
   else
     session[:lists] << { name: new_list_name, todos: [] }
