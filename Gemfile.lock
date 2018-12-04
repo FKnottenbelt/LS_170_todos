@@ -13,6 +13,8 @@ GEM
       regexp_parser (~> 1.2)
       xpath (~> 3.2)
     erubis (2.7.0)
+    launchy (2.4.3)
+      addressable (~> 2.3)
     mini_mime (1.0.1)
     mini_portile2 (2.3.0)
     minitest (5.11.3)
@@ -48,6 +50,7 @@ PLATFORMS
 DEPENDENCIES
   capybara
   erubis
+  launchy
   minitest
   rack (~> 1.6.11)
   rack-protection (~> 1.5.5)

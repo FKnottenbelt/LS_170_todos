@@ -10,4 +10,5 @@ group :development, :test do
   gem 'minitest'
   gem 'capybara'
   gem 'rake'
+  gem 'launchy'
 end

@@ -11,6 +11,8 @@ class CapybaraTestCase < Minitest::Test
 
   Capybara.app = Sinatra::Application
 
+  Capybara.save_path = './tmp/'
+
   def teardown
     Capybara.reset_sessions!
     Capybara.use_default_driver
@@ -68,7 +70,7 @@ class TodoTest < CapybaraTestCase
     click_link("New List")
     fill_in 'list_name', with: 'non unique List'
     click_button("Save")
-
+save_and_open_page
     # when I visit the lists page
     visit '/lists'
 
