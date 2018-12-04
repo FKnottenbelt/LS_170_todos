@@ -1,25 +1,6 @@
-ENV["RACK_ENV"] = "test"
+require_relative '../helpers/test_helper'
 
-require 'minitest/autorun'
-require 'capybara/minitest'
-
-require_relative '../todo.rb'
-
-class CapybaraTestCase < Minitest::Test
-  include Capybara::DSL
-  include Capybara::Minitest::Assertions
-
-  Capybara.app = Sinatra::Application
-
-  Capybara.save_path = './tmp/'
-
-  def teardown
-    Capybara.reset_sessions!
-    Capybara.use_default_driver
-  end
-end
-
-class TodoTest < CapybaraTestCase
+class ListAcceptTest < CapybaraTestCase
 
   def test_homepage_redirects_to_lists
     # when I visit the homepage
@@ -64,25 +45,4 @@ class TodoTest < CapybaraTestCase
     assert_content("List name must by between 1 and 100 characters")
   end
 
-  def test_listname_must_be_unique
-    # setup
-    visit '/lists'
-    click_link("New List")
-    fill_in 'list_name', with: 'non unique List'
-    click_button("Save")
-
-    # when I visit the lists page
-    visit '/lists'
-
-    # and I click on the new list link
-    click_link("New List")
-
-    # when I input a non unique list name
-    fill_in 'list_name', with: 'non unique List'
-    # and click the save button
-    click_button("Save")
-    # I won't be redirected to the lists page
-    # and get an error message
-    assert_content("List name must be unique")
-  end
 end

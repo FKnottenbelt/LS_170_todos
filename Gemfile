@@ -11,4 +11,5 @@ group :development, :test do
   gem 'capybara'
   gem 'rake'
   gem 'launchy'
+  gem 'minitest-reporters'
 end
