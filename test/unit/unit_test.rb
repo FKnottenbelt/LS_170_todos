@@ -9,7 +9,6 @@ class UnitTest < CapybaraTestCase
     fill_in 'list_name', with: 'non unique List'
     click_button("Save")
 
-    # when I visit the lists page
     visit '/lists'
     click_link("New List")
     fill_in 'list_name', with: 'non unique List'
