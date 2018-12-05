@@ -45,4 +45,20 @@ class ListAcceptTest < CapybaraTestCase
     assert_content("List name must by between 1 and 100 characters")
   end
 
+  def test_clicking_on_list_gives_list_detail_page
+    # setup
+    visit '/lists'
+    click_link("New List")
+    fill_in 'list_name', with: 'Vacation'
+    click_button("Save")
+
+    # when I am on the all list page
+    visit '/lists'
+    # and I click on a list
+    click_link('Vacation')
+    # I go the the list detail page
+    assert_current_path("/lists/0")
+    # where I see my lists name
+    assert_content('Vacation')
+  end
 end
