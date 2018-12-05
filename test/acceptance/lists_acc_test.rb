@@ -60,5 +60,21 @@ class ListAcceptTest < CapybaraTestCase
     assert_current_path("/lists/0")
     # where I see my lists name
     assert_content('Vacation')
+    page.assert_selector('#todos')
+  end
+
+  def test_list_detail_page_has_link_to_all_lists
+    # setup
+    visit '/lists'
+    click_link("New List")
+    fill_in 'list_name', with: 'Vacation'
+    click_button("Save")
+
+    # when I am on the list detail page
+    click_link('Vacation')
+    # I can click the All lists link
+    click_link("All lists")
+    # and be taken to the all lists page
+    assert_current_path("/lists")
   end
 end

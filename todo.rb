@@ -47,3 +47,10 @@ end
 get '/lists/new' do
   erb :new_list, layout: :layout
 end
+
+# View one list
+get "/lists/:index" do
+  index = params[:index].to_i
+  @list = session[:lists][index]
+  erb :list_detail, layout: :layout
+end
