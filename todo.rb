@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'tilt/erubis'
+require 'sinatra/content_for'
 
 configure do
   enable :sessions
