@@ -1,6 +1,12 @@
 require_relative '../helpers/test_helper'
 
 class ListAcceptTest < CapybaraTestCase
+  def setup
+    visit '/lists'
+    click_link("New List")
+    fill_in 'list_name', with: 'Vacation'
+    click_button("Save")
+  end
 
   def test_homepage_redirects_to_lists
     # when I visit the homepage
@@ -46,12 +52,7 @@ class ListAcceptTest < CapybaraTestCase
   end
 
   def test_clicking_on_list_gives_list_detail_page
-    # setup
-    visit '/lists'
-    click_link("New List")
-    fill_in 'list_name', with: 'Vacation'
-    click_button("Save")
-
+    # I have a list called Vacation (see setup)
     # when I am on the all list page
     visit '/lists'
     # and I click on a list
@@ -64,17 +65,45 @@ class ListAcceptTest < CapybaraTestCase
   end
 
   def test_list_detail_page_has_link_to_all_lists
-    # setup
-    visit '/lists'
-    click_link("New List")
-    fill_in 'list_name', with: 'Vacation'
-    click_button("Save")
-
+    # I have a list called Vacation (see setup)
     # when I am on the list detail page
     click_link('Vacation')
     # I can click the All lists link
     click_link("All lists")
     # and be taken to the all lists page
     assert_current_path("/lists")
+  end
+
+  def test_edit_list_name
+    # I have a list called Vacation (see setup)
+    # if I am at the detail list page
+    visit '/lists/0'
+    # I see a edit lists link
+    click_link("Edit List")
+    # if I click the edit list link I go to a form on
+    # the lists/<list id>/edit page
+    assert_current_path("/lists/0/edit")
+    # I will see a header saying 'Editing <listname'>
+    assert_content("Editing 'Vacation'")
+
+    # actions on edit page:
+    # if I change the list name
+    fill_in 'list_name', with: 'Sun Vacation'
+    click_button("Save")
+    # I will get the edit list page
+    # and the list name will be changed in to my new name
+    assert_current_path("/lists/0")
+    assert_content('Sun Vacation')
+  end
+
+  def test_cancel_in_edit_list_goes_back_to_list_detail
+    # I have a list called Vacation (see setup)
+    # if I am at the detail list page
+    visit '/lists/0'
+    click_link("Edit List")
+    # if a click the cancel link
+    click_link("Cancel")
+    # I go back to the list detail page
+    assert_current_path("/lists/0")
   end
 end

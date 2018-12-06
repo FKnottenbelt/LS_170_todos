@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'tilt/erubis'
 require 'sinatra/content_for'
+require 'sinatra/reloader'
 
 configure do
   enable :sessions
@@ -54,4 +55,28 @@ get "/lists/:index" do
   index = params[:index].to_i
   @list = session[:lists][index]
   erb :list_detail, layout: :layout
+end
+
+# Edit one list
+get "/lists/:index/edit" do
+  index = params[:index].to_i
+  @list = session[:lists][index]
+  erb :edit_list, layout: :layout
+end
+
+# Edit one list
+post "/lists/:index" do
+  index = params[:index].to_i
+  new_list_name = params[:list_name].strip
+
+  error = error_for_list_name(new_list_name)
+  if error
+    @list = session[:lists][index]
+    session[:error] = error
+    erb :edit_list, layout: :layout
+  else
+    session[:lists][index][:name] = new_list_name
+    session[:success] = 'The list has been created'
+    redirect "/lists/#{index}"
+  end
 end
