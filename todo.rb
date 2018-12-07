@@ -57,14 +57,14 @@ get "/lists/:index" do
   erb :list_detail, layout: :layout
 end
 
-# Edit one list
+# Edit existing list
 get "/lists/:index/edit" do
   index = params[:index].to_i
   @list = session[:lists][index]
   erb :edit_list, layout: :layout
 end
 
-# Edit one list
+# Update existing list
 post "/lists/:index" do
   index = params[:index].to_i
   new_list_name = params[:list_name].strip
@@ -76,7 +76,7 @@ post "/lists/:index" do
     erb :edit_list, layout: :layout
   else
     session[:lists][index][:name] = new_list_name
-    session[:success] = 'The list has been created'
+    session[:success] = 'The list has been updated'
     redirect "/lists/#{index}"
   end
 end

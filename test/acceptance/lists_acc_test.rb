@@ -1,6 +1,7 @@
 require_relative '../helpers/test_helper'
 
 class ListAcceptTest < CapybaraTestCase
+
   def setup
     visit '/lists'
     click_link("New List")
@@ -94,6 +95,8 @@ class ListAcceptTest < CapybaraTestCase
     # and the list name will be changed in to my new name
     assert_current_path("/lists/0")
     assert_content('Sun Vacation')
+    # and I will get a succes message
+    assert_content("The list has been updated")
   end
 
   def test_cancel_in_edit_list_goes_back_to_list_detail
