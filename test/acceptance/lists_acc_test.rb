@@ -116,7 +116,7 @@ class ListAcceptTest < CapybaraTestCase
     visit '/lists/0'
     click_link("Edit List")
     # And I click the link 'delete list'
-    click_link("Delete List")
+    click_button("Delete List")
     # and I will be redirected to the all list page
     assert_current_path '/lists'
     # my list will be deleted

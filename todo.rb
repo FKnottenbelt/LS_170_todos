@@ -82,7 +82,7 @@ post '/lists/:index' do
 end
 
 # Delete existing list
-get '/lists/:index/delete' do
+post '/lists/:index/delete' do
   session[:lists].delete_at(params[:index].to_i)
   session[:success] = 'The list has been deleted'
   redirect '/lists'
