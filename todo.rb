@@ -51,21 +51,21 @@ get '/lists/new' do
 end
 
 # View one list
-get "/lists/:index" do
+get '/lists/:index' do
   index = params[:index].to_i
   @list = session[:lists][index]
   erb :list_detail, layout: :layout
 end
 
 # Edit existing list
-get "/lists/:index/edit" do
+get '/lists/:index/edit' do
   index = params[:index].to_i
   @list = session[:lists][index]
   erb :edit_list, layout: :layout
 end
 
 # Update existing list
-post "/lists/:index" do
+post '/lists/:index' do
   index = params[:index].to_i
   new_list_name = params[:list_name].strip
 
@@ -79,4 +79,11 @@ post "/lists/:index" do
     session[:success] = 'The list has been updated'
     redirect "/lists/#{index}"
   end
+end
+
+# Delete existing list
+get '/lists/:index/delete' do
+  session[:lists].delete_at(params[:index].to_i)
+  session[:success] = 'The list has been deleted'
+  redirect '/lists'
 end

@@ -109,4 +109,19 @@ class ListAcceptTest < CapybaraTestCase
     # I go back to the list detail page
     assert_current_path("/lists/0")
   end
+
+  def test_delete_a_list
+    # I have a list called Vacation (see setup)
+    # if I am at the detail list page
+    visit '/lists/0'
+    click_link("Edit List")
+    # And I click the link 'delete list'
+    click_link("Delete List")
+    # and I will be redirected to the all list page
+    assert_current_path '/lists'
+    # my list will be deleted
+    refute_content("Vacation")
+    # where I get a succes message
+    assert_content("The list has been deleted")
+  end
 end
