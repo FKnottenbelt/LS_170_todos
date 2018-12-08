@@ -125,7 +125,7 @@ class ListAcceptTest < CapybaraTestCase
     assert_content("The list has been deleted")
   end
 
-  def test_adding_a_new_todo_list
+  def test_adding_a_new_todo_to_list
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
     visit '/lists/0'
@@ -139,5 +139,23 @@ class ListAcceptTest < CapybaraTestCase
     assert_content("Book train")
     # and I get a succes message
     assert_content("The list has been updated and Todo is added")
+  end
+
+  def test_adding_invald_new_todo_to_list
+    # I have a list called Vacation (see setup)
+    # if I am at the detail list page
+    visit '/lists/0'
+    # I can enter a new todolist
+    too_long_todo_name = 'a' * 101
+    fill_in 'todo', with: too_long_todo_name
+    # when I click the add button
+    click_button("Add")
+    # I stay on the page
+    assert_current_path '/lists/0/todos'
+    # the input field will display my erronous todo name
+    todo_name = find_field(id: 'todo').value
+    assert_equal(too_long_todo_name, todo_name)
+    # and I get a error message
+    assert_content("Todo name must by between 1 and 100 characters")
   end
 end
