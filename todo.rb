@@ -87,3 +87,30 @@ post '/lists/:index/delete' do
   session[:success] = 'The list has been deleted'
   redirect '/lists'
 end
+
+
+def error_for_todo_name(todo_name)
+  if !todo_name.size.between?(1, 100)
+    'Todo name must by between 1 and 100 characters'
+  elsif session[:lists].any? { |list| list[:todo].include?(todo_name) }
+    'Todo name must be unique'
+  end
+end
+
+# Add new todo to list
+post '/lists/:index/todos' do
+  index = params[:index].to_i
+  new_todo_name = params[:todo].strip
+  @list = session[:lists][index]
+
+  error = error_for_todo_name(new_todo_name)
+  if error
+    session[:error] = error
+    erb :list_detail, layout: :layout
+  else
+    session[:lists][index][:todos] << new_todo_name
+    session[:success] = 'The list has been updated and Todo is added'
+    redirect "/lists/#{index}"
+  end
+
+end
