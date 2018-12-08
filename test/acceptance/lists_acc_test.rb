@@ -124,4 +124,20 @@ class ListAcceptTest < CapybaraTestCase
     # where I get a succes message
     assert_content("The list has been deleted")
   end
+
+  def test_adding_a_new_todo_list
+    # I have a list called Vacation (see setup)
+    # if I am at the detail list page
+    visit '/lists/0'
+    # I can enter a new todolist
+    fill_in 'todo', with: 'Book train'
+    # when I click the add button
+    click_button("Add")
+    # I stay on the page
+    assert_current_path '/lists/0'
+    # the todo is added to the list
+    assert_content("Book train")
+    # and I get a succes message
+    assert_content("The list has been updated and Todo is added")
+  end
 end

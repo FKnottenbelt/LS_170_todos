@@ -92,7 +92,7 @@ end
 def error_for_todo_name(todo_name)
   if !todo_name.size.between?(1, 100)
     'Todo name must by between 1 and 100 characters'
-  elsif session[:lists].any? { |list| list[:todo].include?(todo_name) }
+  elsif session[:lists].any? { |list| list[:todos].include?(todo_name) }
     'Todo name must be unique'
   end
 end
