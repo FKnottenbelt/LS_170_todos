@@ -100,15 +100,15 @@ end
 # Add new todo to list
 post '/lists/:index/todos' do
   index = params[:index].to_i
-  new_todo_name = params[:todo].strip
+  @new_todo_name = params[:todo].strip
   @list = session[:lists][index]
 
-  error = error_for_todo_name(new_todo_name)
+  error = error_for_todo_name(@new_todo_name)
   if error
     session[:error] = error
     erb :list_detail, layout: :layout
   else
-    session[:lists][index][:todos] << new_todo_name
+    session[:lists][index][:todos] << @new_todo_name
     session[:success] = 'The list has been updated and Todo is added'
     redirect "/lists/#{index}"
   end
