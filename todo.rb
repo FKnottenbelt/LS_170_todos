@@ -114,3 +114,8 @@ post '/lists/:index/todos' do
   end
 
 end
+
+# Cancel adding todo
+get '/lists/:index/todos' do
+  redirect "/lists/#{params[:index].to_i}"
+end

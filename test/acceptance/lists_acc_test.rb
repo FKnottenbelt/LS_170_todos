@@ -158,4 +158,21 @@ class ListAcceptTest < CapybaraTestCase
     # and I get a error message
     assert_content("Todo name must by between 1 and 100 characters")
   end
+
+  def test_add_new_todo_form_has_cancel_button
+    # I have a list called Vacation (see setup)
+    # if I am at the detail list page
+    visit '/lists/0'
+    # I can enter a new todolist
+    too_long_todo_name = 'a' * 101
+    fill_in 'todo', with: too_long_todo_name
+    # when I click the add button
+    click_button("Add")
+    # I stay on the page
+    assert_current_path '/lists/0/todos'
+    # I can click the cancel link
+    click_link('Cancel')
+    # and be redirected to to list detail page
+    assert_current_path "/lists/0"
+  end
 end
