@@ -82,8 +82,8 @@ post '/lists/:list_index' do
 end
 
 # Delete existing list
-post '/lists/:index/delete' do
-  session[:lists].delete_at(params[:index].to_i)
+post '/lists/:list_index/delete' do
+  session[:lists].delete_at(params[:list_index].to_i)
   session[:success] = 'The list has been deleted'
   redirect '/lists'
 end
@@ -119,4 +119,13 @@ end
 get '/lists/:list_index/todos' do
   index = params[:list_index].to_i
   redirect "/lists/#{index}"
+end
+
+# Delete existing todo
+post '/lists/:list_index/todos/:todo_index/delete' do
+  list_index = params[:list_index].to_i
+  todo_index = params[:todo_index].to_i
+  session[:lists][list_index][:todos].delete_at(todo_index)
+  session[:success] = 'The todo has been deleted'
+  redirect "/lists/#{list_index}" # list_detail_page
 end

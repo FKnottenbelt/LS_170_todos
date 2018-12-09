@@ -163,7 +163,7 @@ class ListAcceptTest < CapybaraTestCase
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
     visit '/lists/0'
-    # I can enter a new todolist
+    # I can enter a new todo
     too_long_todo_name = 'a' * 101
     fill_in 'todo', with: too_long_todo_name
     # when I click the add button
@@ -174,5 +174,29 @@ class ListAcceptTest < CapybaraTestCase
     click_link('Cancel')
     # and be redirected to to list detail page
     assert_current_path "/lists/0"
+  end
+
+  def test_delete_a_todo_from_list
+    # setup
+    # I have a list called Vacation (see setup)
+    # if I am at the detail list page
+    visit '/lists/0'
+    # I can enter a new todolist
+    fill_in 'todo', with: 'Book train'
+    # when I click the add button
+    click_button("Add")
+    # I stay on the page
+    assert_current_path '/lists/0'
+    # the todo is added to the list
+    assert_content("Book train")
+
+    # if I click the delete next to my todo
+    click_button("Delete")
+    # I am still on the same page
+    assert_current_path '/lists/0'
+    # but my todo is deleted
+    refute_content("Book train")
+    # I get a succes message
+    assert_content("The todo has been deleted")
   end
 end
