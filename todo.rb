@@ -52,32 +52,32 @@ end
 
 # View one list
 get '/lists/:list_index' do
-  index = params[:list_index].to_i
-  @list = session[:lists][index]
+  @list_index = params[:list_index].to_i
+  @list = session[:lists][@list_index]
   erb :list_detail, layout: :layout
 end
 
 # Edit existing list
 get '/lists/:list_index/edit' do
-  index = params[:list_index].to_i
-  @list = session[:lists][index]
+  @list_index = params[:list_index].to_i
+  @list = session[:lists][@list_index]
   erb :edit_list, layout: :layout
 end
 
 # Update existing list
 post '/lists/:list_index' do
-  index = params[:list_index].to_i
+  @list_index = params[:list_index].to_i
   new_list_name = params[:list_name].strip
 
   error = error_for_list_name(new_list_name)
   if error
-    @list = session[:lists][index]
+    @list = session[:lists][@list_index]
     session[:error] = error
     erb :edit_list, layout: :layout
   else
-    session[:lists][index][:name] = new_list_name
+    session[:lists][@list_index][:name] = new_list_name
     session[:success] = 'The list has been updated'
-    redirect "/lists/#{index}"
+    redirect "/lists/#{@list_index}"
   end
 end
 
@@ -87,7 +87,6 @@ post '/lists/:index/delete' do
   session[:success] = 'The list has been deleted'
   redirect '/lists'
 end
-
 
 def error_for_todo_name(todo_name)
   if !todo_name.size.between?(1, 100)
@@ -99,19 +98,19 @@ end
 
 # Add new todo to list
 post '/lists/:list_index/todos' do
-  list_index = params[:list_index].to_i
+  @list_index = params[:list_index].to_i
   @new_todo_name = params[:todo].strip
-  @list = session[:lists][list_index]
+  @list = session[:lists][@list_index]
 
   error = error_for_todo_name(@new_todo_name)
   if error
     session[:error] = error
     erb :list_detail, layout: :layout
   else
-    session[:lists][list_index][:todos] << { name: @new_todo_name ,
+    session[:lists][@list_index][:todos] << { name: @new_todo_name ,
                                              completed: false }
     session[:success] = 'The list has been updated and Todo is added'
-    redirect "/lists/#{list_index}" # list_detail page
+    redirect "/lists/#{@list_index}" # list_detail page
   end
 
 end

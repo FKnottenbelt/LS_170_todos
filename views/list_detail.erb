@@ -3,7 +3,7 @@
     <h2><%= @list[:name] %></h2>
     <ul>
       <li>
-        <a class='edit' href='/lists/<%= params[:list_index] %>/edit'>Edit List</a>
+        <a class='edit' href='/lists/<%= @list_index %>/edit'>Edit List</a>
       </li>
     </ul>
    </header>
@@ -18,7 +18,7 @@
 
 </section>
 
-<form action="/lists/<%= params[:list_index] %>/todos" method="post">
+<form action="/lists/<%= @list_index %>/todos" method="post">
   <% @new_todo_name ||= nil %>
   <dl>
     <dt>
@@ -31,7 +31,7 @@
   </dl>
   <fieldset class="actions">
     <input type="submit" value="Add">
-    <a href="/lists/<%= params[:list_index] %>">Cancel</a>
+    <a href="/lists/<%= @list_index %>">Cancel</a>
   </fieldset>
 </form>
 
