@@ -51,22 +51,22 @@ get '/lists/new' do
 end
 
 # View one list
-get '/lists/:index' do
-  index = params[:index].to_i
+get '/lists/:list_index' do
+  index = params[:list_index].to_i
   @list = session[:lists][index]
   erb :list_detail, layout: :layout
 end
 
 # Edit existing list
-get '/lists/:index/edit' do
-  index = params[:index].to_i
+get '/lists/:list_index/edit' do
+  index = params[:list_index].to_i
   @list = session[:lists][index]
   erb :edit_list, layout: :layout
 end
 
 # Update existing list
-post '/lists/:index' do
-  index = params[:index].to_i
+post '/lists/:list_index' do
+  index = params[:list_index].to_i
   new_list_name = params[:list_name].strip
 
   error = error_for_list_name(new_list_name)
@@ -98,8 +98,8 @@ def error_for_todo_name(todo_name)
 end
 
 # Add new todo to list
-post '/lists/:index/todos' do
-  index = params[:index].to_i
+post '/lists/:list_index/todos' do
+  index = params[:list_index].to_i
   @new_todo_name = params[:todo].strip
   @list = session[:lists][index]
 
@@ -116,6 +116,7 @@ post '/lists/:index/todos' do
 end
 
 # Cancel adding todo
-get '/lists/:index/todos' do
-  redirect "/lists/#{params[:index].to_i}"
+get '/lists/:list_index/todos' do
+  index = params[:list_index].to_i
+  redirect "/lists/#{index}"
 end
