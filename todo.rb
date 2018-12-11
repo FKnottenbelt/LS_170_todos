@@ -129,3 +129,16 @@ post '/lists/:list_index/todos/:todo_index/delete' do
   session[:success] = 'The todo has been deleted'
   redirect "/lists/#{list_index}" # list_detail_page
 end
+
+# Update a todo completed status
+post '/lists/:list_index/todos/:todo_index/check' do
+  @list_index = params[:list_index].to_i
+  @todo_index = params[:todo_index].to_i
+  @list = session[:lists][@list_index]
+
+  is_completed = params[:completed] == 'true'
+  @list[:todos][@todo_index][:completed] = is_completed
+  session[:success] = 'The todo status has been updated'
+
+  redirect "/lists/#{@list_index}" # list_detail_page
+end

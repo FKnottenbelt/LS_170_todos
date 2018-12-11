@@ -199,4 +199,56 @@ class ListAcceptTest < CapybaraTestCase
     # I get a succes message
     assert_content("The todo has been deleted")
   end
+
+  def test_mark_todo_as_complete
+    # setup
+    # I have a list called Vacation (see setup)
+    # if I am at the detail list page
+    visit '/lists/0'
+    # I can enter a new todolist
+    fill_in 'todo', with: 'Book train'
+    # when I click the add button
+    click_button("Add")
+    # I stay on the page
+    assert_current_path '/lists/0'
+    # the todo is added to the list
+    assert_content("Book train")
+
+    # if I mark the todo completed
+    click_button("Complete")
+    # I will still be on the list detail page
+    assert_current_path '/lists/0'
+    # the box is checked
+    # and the task is greyed
+    find('.complete')
+    # and I get a succes message
+    assert_content("The todo status has been updated")
+  end
+
+  def test_mark_todo_as_not_complete
+    # setup
+    # I have a list called Vacation (see setup)
+    # if I am at the detail list page
+    visit '/lists/0'
+    # I can enter a new todolist
+    fill_in 'todo', with: 'Book train'
+    # when I click the add button
+    click_button("Add")
+    # I stay on the page
+    assert_current_path '/lists/0'
+    # the todo is added to the list
+    assert_content("Book train")
+
+    # if I mark the todo uncompleted
+    click_button("Complete")
+    click_button("Complete")
+    # I will still be on the list detail page
+    assert_current_path '/lists/0'
+    # the box is checked
+    # and the task is greyed
+    find('.uncomplete')
+    # and I get a succes message
+    assert_content("The todo status has been updated")
+  end
 end
+
