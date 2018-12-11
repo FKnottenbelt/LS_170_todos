@@ -142,3 +142,16 @@ post '/lists/:list_index/todos/:todo_index/check' do
 
   redirect "/lists/#{@list_index}" # list_detail_page
 end
+
+# Complete all todos on a list
+post '/lists/:list_index/complete' do
+  @list_index = params[:list_index].to_i
+  @list = session[:lists][@list_index]
+
+  @list[:todos].each do |todo|
+      todo[:completed] = true
+  end
+
+  session[:success] = 'All todos have been marked completed'
+  redirect "/lists/#{@list_index}" # list_detail_page
+end

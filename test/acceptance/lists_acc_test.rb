@@ -181,7 +181,7 @@ class ListAcceptTest < CapybaraTestCase
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
     visit '/lists/0'
-    # I can enter a new todolist
+    # I can enter a new todo item
     fill_in 'todo', with: 'Book train'
     # when I click the add button
     click_button("Add")
@@ -205,7 +205,7 @@ class ListAcceptTest < CapybaraTestCase
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
     visit '/lists/0'
-    # I can enter a new todolist
+    # I can enter a new todo item
     fill_in 'todo', with: 'Book train'
     # when I click the add button
     click_button("Add")
@@ -230,7 +230,7 @@ class ListAcceptTest < CapybaraTestCase
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
     visit '/lists/0'
-    # I can enter a new todolist
+    # I can enter a new todo item
     fill_in 'todo', with: 'Book train'
     # when I click the add button
     click_button("Add")
@@ -249,6 +249,25 @@ class ListAcceptTest < CapybaraTestCase
     find('.uncomplete')
     # and I get a succes message
     assert_content("The todo status has been updated")
+  end
+
+  def test_mark_all_todos_on_a_list_as_complete
+    # setup
+    # I have a list called Vacation (see setup)
+    visit '/lists/0'
+    fill_in 'todo', with: 'Pack bags'
+    click_button("Add")
+    fill_in 'todo', with: 'Book hotel'
+    click_button("Add")
+    fill_in 'todo', with: 'Find cat sitter'
+    click_button("Add")
+
+    # if I click the complete all button
+    click_button('Complete All')
+    # all items should be complete
+    refute page.has_selector?('.uncomplete')
+    # I get a succes message
+    assert_content("All todos have been marked completed")
   end
 end
 
