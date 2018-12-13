@@ -220,7 +220,7 @@ class ListAcceptTest < CapybaraTestCase
     assert_current_path '/lists/0'
     # the box is checked
     # and the task is greyed
-    find('.complete')
+    page.has_selector?('.complete')
     # and I get a succes message
     assert_content("The todo status has been updated")
   end
@@ -246,7 +246,7 @@ class ListAcceptTest < CapybaraTestCase
     assert_current_path '/lists/0'
     # the box is checked
     # and the task is greyed
-    find('.uncomplete')
+    refute page.has_selector?('.complete')
     # and I get a succes message
     assert_content("The todo status has been updated")
   end

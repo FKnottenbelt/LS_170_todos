@@ -8,14 +8,23 @@ configure do
   set :session_secret, 'secret'
 end
 
-before do
-  session[:lists] ||= []
-end
-
 helpers do
   def count_completed_todos(list)
     list[:todos].select { |todo| todo[:completed] == true }.count
   end
+
+  def list_complete?(list)
+    list[:todos].map {|todo| todo[:completed] }.all? == true &&
+    list[:todos].count > 0
+  end
+
+  def list_class(list)
+    list_complete?(list) ? 'complete' : 'uncomplete'
+  end
+end
+
+before do
+  session[:lists] ||= []
 end
 
 get '/' do
