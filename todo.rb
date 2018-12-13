@@ -12,6 +12,12 @@ before do
   session[:lists] ||= []
 end
 
+helpers do
+  def count_completed_todos(list)
+    list[:todos].select { |todo| todo[:completed] == true }.count
+  end
+end
+
 get '/' do
   redirect '/lists'
 end
