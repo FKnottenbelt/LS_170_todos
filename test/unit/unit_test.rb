@@ -43,4 +43,54 @@ class UnitTest < CapybaraTestCase
     }
     assert_equal(2, count_remaining_todos(my_list))
   end
+
+  def test_count_count
+    my_list = { name: 'testlist' ,
+                todos: [{ name:'todo1' , completed: false },
+                        { name:'todo2' , completed: false },
+                        { name:'todo3' , completed: true }
+                      ]
+    }
+    assert_equal(3, todos_count(my_list))
+  end
+
+  def test_list_is_not_complete
+    my_list = { name: 'testlist' ,
+                todos: [{ name:'todo1' , completed: false },
+                        { name:'todo2' , completed: false },
+                        { name:'todo3' , completed: true }
+                      ]
+    }
+    assert_equal(false, list_complete?(my_list))
+  end
+
+  def test_list_is_complete
+    my_list = { name: 'testlist' ,
+                todos: [{ name:'todo1' , completed: true },
+                        { name:'todo2' , completed: true },
+                        { name:'todo3' , completed: true }
+                      ]
+    }
+    assert_equal(true, list_complete?(my_list))
+  end
+
+  def test_list_class_is_not_complete
+    my_list = { name: 'testlist' ,
+                todos: [{ name:'todo1' , completed: false },
+                        { name:'todo2' , completed: false },
+                        { name:'todo3' , completed: true }
+                      ]
+    }
+    assert_equal('uncomplete', list_class(my_list))
+  end
+
+  def test_list_class_is_complete
+    my_list = { name: 'testlist' ,
+                todos: [{ name:'todo1' , completed: true },
+                        { name:'todo2' , completed: true },
+                        { name:'todo3' , completed: true }
+                      ]
+    }
+    assert_equal('complete', list_class(my_list))
+  end
 end
