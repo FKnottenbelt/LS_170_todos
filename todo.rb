@@ -8,7 +8,7 @@ configure do
   set :session_secret, 'secret'
 end
 
-helpers do
+module Helpers
   def count_remaining_todos(list)
     list[:todos].select { |todo| todo[:completed] == false }.count
   end
@@ -26,6 +26,9 @@ helpers do
   end
 end
 
+helpers do
+  include Helpers
+end
 
 before do
   session[:lists] ||= []
