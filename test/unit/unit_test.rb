@@ -93,4 +93,29 @@ class UnitTest < CapybaraTestCase
     }
     assert_equal('complete', list_class(my_list))
   end
+
+  def test_sort_list_by_completion
+    my_lists = [{ name: 'testlistA' ,
+                  todos: [{ name:'todo1a' , completed: true }]},
+                { name: 'testlistB' ,
+                  todos: [{ name:'todo1b' , completed: false }]},
+                { name: 'testlistC' ,
+                  todos: [{ name:'todo1c' , completed: false }]}
+    ]
+
+    expected = [
+      {:name=>"testlistB", :todos=>[{:name=>"todo1b", :completed=>false}]},
+      {:name=>"testlistC", :todos=>[{:name=>"todo1c", :completed=>false}]},
+      {:name=>"testlistA", :todos=>[{:name=>"todo1a", :completed=>true}]}
+      ]
+
+    result_list = {}
+    result = []
+    myblock = Proc.new { |list, id| result << result_list[id] = list }
+
+    sort_lists(my_lists, &myblock)
+
+    assert_equal(expected, result )
+  end
 end
+
