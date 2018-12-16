@@ -31,14 +31,14 @@ module Helpers
 
     lists.each_with_index do |list, index|
       if list_complete?(list)
-        complete_lists[index] = list
+        complete_lists[list] = index
       else
-        incomplete_lists[index] = list
+        incomplete_lists[list] = index
       end
     end
 
-    incomplete_lists.each { |id, list| yield list, id }
-    complete_lists.each { |id, list| yield list, id }
+    incomplete_lists.each(&block)
+    complete_lists.each(&block)
   end
 end
 
