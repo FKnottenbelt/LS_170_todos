@@ -24,6 +24,22 @@ module Helpers
   def list_class(list)
     list_complete?(list) ? 'complete' : 'uncomplete'
   end
+
+  def sort_lists(lists, &block)
+    incomplete_lists = {}
+    complete_lists = {}
+
+    lists.each_with_index do |list, index|
+      if list_complete?(list)
+        complete_lists[index] = list
+      else
+        incomplete_lists[index] = list
+      end
+    end
+
+    incomplete_lists.each { |id, list| yield list, id }
+    complete_lists.each { |id, list| yield list, id }
+  end
 end
 
 helpers do
