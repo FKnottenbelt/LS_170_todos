@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'tilt/erubis'
 require 'sinatra/content_for'
-require 'sinatra/reloader'
+require 'sinatra/reloader' if development?
 
 configure do
   enable :sessions
