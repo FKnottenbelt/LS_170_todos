@@ -95,12 +95,10 @@ class UnitTest < CapybaraTestCase
   end
 
   def test_sort_list_by_completion
-    my_lists = [{ name: 'testlistA' ,
-                  todos: [{ name:'todo1a' , completed: true }]},
-                { name: 'testlistB' ,
-                  todos: [{ name:'todo1b' , completed: false }]},
-                { name: 'testlistC' ,
-                  todos: [{ name:'todo1c' , completed: false }]}
+    my_lists = [
+      { name: 'testlistA', todos: [{ name:'todo1a' , completed: true }]},
+      { name: 'testlistB', todos: [{ name:'todo1b' , completed: false }]},
+      { name: 'testlistC', todos: [{ name:'todo1c' , completed: false }]}
     ]
 
     expected = [
@@ -114,6 +112,28 @@ class UnitTest < CapybaraTestCase
     myblock = Proc.new { |list, id| result << result_list[id] = list }
 
     sort_lists(my_lists, &myblock)
+
+    assert_equal(expected, result )
+  end
+
+  def test_sort_todos_by_completion
+    my_lists = { name: 'testlistA',
+                 todos: [{ name:'todo1a', completed: false },
+                         { name:'todo2a', completed: true },
+                         { name:'todo3a', completed: false }
+                        ]}
+
+    expected = [
+      { name:'todo1a', completed: false },
+      { name:'todo3a', completed: false },
+      { name:'todo2a', completed: true }
+    ]
+
+    result_todo = {}
+    result = []
+    myblock = Proc.new { |todo, id| result << result_todo[id] = todo}
+
+    sort_todos(my_lists[:todos], &myblock)
 
     assert_equal(expected, result )
   end
