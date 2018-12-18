@@ -7,6 +7,8 @@ require 'bundler/setup'
 configure do
   enable :sessions
   set :session_secret, 'secret'
+
+  set :erb, :escape_html => true
 end
 
 module Helpers
@@ -41,6 +43,7 @@ module Helpers
     incomplete_todos.each { |todo| yield todo, todos.index(todo) }
     complete_todos.each { |todo| yield todo, todos.index(todo) }
   end
+
 end
 
 helpers do
