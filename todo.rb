@@ -54,6 +54,15 @@ before do
   session[:lists] ||= []
 end
 
+def load_list(list_index)
+  list = session[:lists][list_index] if list_index &&
+         session[:lists][list_index]
+  return list if list
+
+  session[:error] = "The specified list was not found."
+  redirect "/lists"
+end
+
 get '/' do
   redirect '/lists'
 end
@@ -95,14 +104,14 @@ end
 # View one list
 get '/lists/:list_index' do
   @list_index = params[:list_index].to_i
-  @list = session[:lists][@list_index]
+  @list = load_list(@list_index)
   erb :list_detail, layout: :layout
 end
 
 # Edit existing list
 get '/lists/:list_index/edit' do
   @list_index = params[:list_index].to_i
-  @list = session[:lists][@list_index]
+  @list = load_list(@list_index)
   erb :edit_list, layout: :layout
 end
 
@@ -113,7 +122,7 @@ post '/lists/:list_index' do
 
   error = error_for_list_name(new_list_name)
   if error
-    @list = session[:lists][@list_index]
+    @list = @list = load_list(@list_index)
     session[:error] = error
     erb :edit_list, layout: :layout
   else
@@ -142,7 +151,7 @@ end
 post '/lists/:list_index/todos' do
   @list_index = params[:list_index].to_i
   @new_todo_name = params[:todo].strip
-  @list = session[:lists][@list_index]
+  @list = load_list(@list_index)
 
   error = error_for_todo_name(@new_todo_name)
   if error
@@ -165,18 +174,20 @@ end
 
 # Delete existing todo
 post '/lists/:list_index/todos/:todo_index/delete' do
-  list_index = params[:list_index].to_i
+  @list_index = params[:list_index].to_i
   todo_index = params[:todo_index].to_i
-  session[:lists][list_index][:todos].delete_at(todo_index)
+  @list = load_list(@list_index)
+
+  @list[:todos].delete_at(todo_index)
   session[:success] = 'The todo has been deleted'
-  redirect "/lists/#{list_index}" # list_detail_page
+  redirect "/lists/#{@list_index}" # list_detail_page
 end
 
 # Update a todo completed status
 post '/lists/:list_index/todos/:todo_index/check' do
   @list_index = params[:list_index].to_i
   @todo_index = params[:todo_index].to_i
-  @list = session[:lists][@list_index]
+  @list = load_list(@list_index)
 
   is_completed = params[:completed] == 'true'
   @list[:todos][@todo_index][:completed] = is_completed
@@ -188,7 +199,7 @@ end
 # Complete all todos on a list
 post '/lists/:list_index/complete' do
   @list_index = params[:list_index].to_i
-  @list = session[:lists][@list_index]
+  @list = load_list(@list_index)
 
   @list[:todos].each do |todo|
       todo[:completed] = true

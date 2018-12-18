@@ -137,5 +137,23 @@ class UnitTest < CapybaraTestCase
 
     assert_equal(expected, result )
   end
+
+  def test_load_list_gives_error_when_index_does_not_exist
+    visit '/lists/200'
+    assert_current_path '/lists'
+    assert_content("The specified list was not found.")
+  end
+
+  def test_load_list_gives_list_when_index_does_exist
+    # setup
+    visit '/lists'
+    click_link("New List")
+    fill_in 'list_name', with: 'List 1'
+    click_button("Save")
+
+    visit '/lists/0'
+    assert_current_path '/lists/0'
+    assert_content("List 1")
+  end
 end
 
