@@ -1,10 +1,18 @@
 ## Sinatra app for a Todo List webapp
-experimenting with Capybara.
+Experimenting with Capybara.
+
+
 ***
+Home page:
+
 ![All lists screenshot](/public/images/Todolist-screenshot-all-lists.png)
+
 ***
+List detail page:
+
 ![List detail screenshot](/public/images/Todolist-screenshot-list-detail.png)
 ***
+
 #### Getting started
 
 To get started with the app, clone the repo and then install the needed gems:
