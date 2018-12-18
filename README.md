@@ -1,7 +1,7 @@
 ## Sinatra app for a Todo List webapp
 experimenting with Capybara.
 
-![All lists screenshot](https://github.com/FKnottenbelt/LS_170_todos/tree/master/public/images/Todolist-screenshot-all-lists.png)
+![All lists screenshot](/public/images/Todolist-screenshot-all-lists.png)
 
 ![List detail screenshot](/public/images/Todolist-screenshot-list-detail.png)
 
