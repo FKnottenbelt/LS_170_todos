@@ -2,6 +2,7 @@ require 'sinatra'
 require 'tilt/erubis'
 require 'sinatra/content_for'
 require 'sinatra/reloader' if development?
+require 'bundler/setup'
 
 configure do
   enable :sessions
