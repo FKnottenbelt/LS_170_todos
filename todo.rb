@@ -179,8 +179,13 @@ post '/lists/:list_index/todos/:todo_index/delete' do
   @list = load_list(@list_index)
 
   @list[:todos].delete_at(todo_index)
-  session[:success] = 'The todo has been deleted'
-  redirect "/lists/#{@list_index}" # list_detail_page
+
+  if env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'
+    status 204
+  else
+    session[:success] = 'The todo has been deleted'
+    redirect "/lists/#{@list_index}" # list_detail_page
+  end
 end
 
 # Update a todo completed status

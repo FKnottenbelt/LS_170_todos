@@ -6,8 +6,19 @@ $(function(){
     var ok = confirm('Are you sure you want to delete this item?');
 
     if (ok) {
-      this.submit();
+      // this.submit();
+
+      var form = $(this);
+
+      var request = $.ajax({
+        url: form.attr('action'),
+        method: form.attr('method')
+      });
+
+      request.done(function(data, textStatus, jqHXR){})
+        form.parent('li').remove();
     }
 
   });
 });
+
