@@ -8,3 +8,8 @@ Rake::TestTask.new(:test) do |t|
   t.libs << "lib"
   t.test_files = FileList['test/**/*_test.rb']
 end
+
+desc 'Start application'
+task :run do
+  system 'rackup' -p 8080
+end
