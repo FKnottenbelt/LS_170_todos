@@ -15,8 +15,14 @@ $(function(){
         method: form.attr('method')
       });
 
-      request.done(function(data, textStatus, jqHXR){})
-        form.parent('li').remove();
+      request.done(function(data, textStatus, jqHXR){
+        if (jqHXR.status === 204) {
+          form.parent('li').remove();
+        } else if (jqHXR.status === 200){
+          document.location = data;
+        }
+      });
+
     }
 
   });

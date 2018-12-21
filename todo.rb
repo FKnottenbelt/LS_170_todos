@@ -135,8 +135,13 @@ end
 # Delete existing list
 post '/lists/:list_index/delete' do
   session[:lists].delete_at(params[:list_index].to_i)
-  session[:success] = 'The list has been deleted'
-  redirect '/lists'
+
+  if env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'
+    '/lists'
+  else
+    session[:success] = 'The list has been deleted'
+    redirect '/lists'
+  end
 end
 
 def error_for_todo_name(todo_name)
