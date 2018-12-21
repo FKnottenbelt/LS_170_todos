@@ -151,8 +151,8 @@ class UnitTest < CapybaraTestCase
     fill_in 'list_name', with: 'List 1'
     click_button("Save")
 
-    visit '/lists/0'
-    assert_current_path '/lists/0'
+    visit '/lists/1'
+    assert_current_path '/lists/1'
     assert_content("List 1")
   end
 

@@ -48,8 +48,8 @@ module Helpers
     complete_todos, incomplete_todos =
       todos.partition { |todo| todo[:completed] }
 
-    incomplete_todos.each &block
-    complete_todos.each &block
+    incomplete_todos.each(&block)
+    complete_todos.each(&block)
   end
 
 end
@@ -60,10 +60,10 @@ end
 
 ############### helper methods ###############
 
-def load_list(list_index)
-  list = session[:lists][list_index] if list_index &&
-         session[:lists][list_index]
-  return list if list
+def load_list(list_id)
+  found_list = session[:lists].find { |list| list[:id] == list_id } if list_id &&
+         session[:lists].find { |list| list[:id] == list_id }
+  return found_list if found_list
 
   session[:error] = "The specified list was not found."
   redirect "/lists"
@@ -83,6 +83,11 @@ def error_for_todo_name(todo_name)
   elsif session[:lists].any? { |list| list[:todos].include?(todo_name) }
     'Todo name must be unique'
   end
+end
+
+def next_list_id(lists)
+  max = lists.map { |list| list[:id] }.max || 0
+  max + 1
 end
 
 def next_todo_id(todos)
@@ -116,7 +121,8 @@ post '/lists' do
     session[:error] = error
     erb :new_list, layout: :layout
   else
-    session[:lists] << { name: new_list_name, todos: [] }
+    list_id = next_list_id(session[:lists])
+    session[:lists] << { id: list_id, name: new_list_name, todos: [] }
     session[:success] = 'The list has been created'
     redirect '/lists'
   end
@@ -171,10 +177,10 @@ post '/lists/:list_index/delete' do
 end
 
 # Add new todo to list
-post '/lists/:list_index/todos' do
-  @list_index = params[:list_index].to_i
+post '/lists/:list_id/todos' do
+  @list_id = params[:list_id].to_i
   @new_todo_name = params[:todo].strip
-  @list = load_list(@list_index)
+  @list = load_list(@list_id)
 
   error = error_for_todo_name(@new_todo_name)
   if error
@@ -182,11 +188,11 @@ post '/lists/:list_index/todos' do
     erb :list_detail, layout: :layout
   else
     todo_id = next_todo_id(@list[:todos])
-    session[:lists][@list_index][:todos] << { id: todo_id,
-                                              name: @new_todo_name ,
-                                              completed: false }
+    @list[:todos] << { id: todo_id,
+                       name: @new_todo_name ,
+                       completed: false }
     session[:success] = 'The list has been updated and Todo is added'
-    redirect "/lists/#{@list_index}" # list_detail page
+    redirect "/lists/#{@list_id}" # list_detail page
   end
 
 end
@@ -215,10 +221,10 @@ post '/lists/:list_index/todos/:todo_id/delete' do
 end
 
 # Update a todo completed status
-post '/lists/:list_index/todos/:todo_id/check' do
-  @list_index = params[:list_index].to_i
+post '/lists/:list_id/todos/:todo_id/check' do
+  @list_id = params[:list_id].to_i
   @todo_id = params[:todo_id].to_i
-  @list = load_list(@list_index)
+  @list = load_list(@list_id)
 
   is_completed = params[:completed] == 'true'
   todo_index = todo_index(@list, @todo_id)
@@ -226,7 +232,7 @@ post '/lists/:list_index/todos/:todo_id/check' do
   @list[:todos][todo_index][:completed] = is_completed
   session[:success] = 'The todo status has been updated'
 
-  redirect "/lists/#{@list_index}" # list_detail_page
+  redirect "/lists/#{@list_id}" # list_detail_page
 end
 
 # Complete all todos on a list

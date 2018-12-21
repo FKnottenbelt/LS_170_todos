@@ -59,7 +59,7 @@ class ListAcceptTest < CapybaraTestCase
     # and I click on a list
     click_link('Vacation')
     # I go the the list detail page
-    assert_current_path("/lists/0")
+    assert_current_path("/lists/1")
     # where I see my lists name
     assert_content('Vacation')
     page.assert_selector('#todos')
@@ -78,12 +78,12 @@ class ListAcceptTest < CapybaraTestCase
   def test_edit_list_name
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
-    visit '/lists/0'
+    visit '/lists/1'
     # I see a edit lists link
     click_link("Edit List")
     # if I click the edit list link I go to a form on
     # the lists/<list id>/edit page
-    assert_current_path("/lists/0/edit")
+    assert_current_path("/lists/1/edit")
     # I will see a header saying 'Editing <listname'>
     assert_content("Editing 'Vacation'")
 
@@ -93,7 +93,7 @@ class ListAcceptTest < CapybaraTestCase
     click_button("Save")
     # I will get the edit list page
     # and the list name will be changed in to my new name
-    assert_current_path("/lists/0")
+    assert_current_path("/lists/1")
     assert_content('Sun Vacation')
     # and I will get a succes message
     assert_content("The list has been updated")
@@ -102,18 +102,18 @@ class ListAcceptTest < CapybaraTestCase
   def test_cancel_in_edit_list_goes_back_to_list_detail
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
-    visit '/lists/0'
+    visit '/lists/1'
     click_link("Edit List")
     # if a click the cancel link
     click_link("Cancel")
     # I go back to the list detail page
-    assert_current_path("/lists/0")
+    assert_current_path("/lists/1")
   end
 
   def test_delete_a_list
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
-    visit '/lists/0'
+    visit '/lists/1'
     click_link("Edit List")
     # And I click the link 'delete list'
     click_button("Delete List")
@@ -128,13 +128,13 @@ class ListAcceptTest < CapybaraTestCase
   def test_adding_a_new_todo_to_list
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
-    visit '/lists/0'
+    visit '/lists/1'
     # I can enter a new todolist
     fill_in 'todo', with: 'Book train'
     # when I click the add button
     click_button("Add")
     # I stay on the page
-    assert_current_path '/lists/0'
+    assert_current_path '/lists/1'
     # the todo is added to the list
     assert_content("Book train")
     # and I get a succes message
@@ -144,14 +144,14 @@ class ListAcceptTest < CapybaraTestCase
   def test_adding_invald_new_todo_to_list
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
-    visit '/lists/0'
+    visit '/lists/1'
     # I can enter a new todolist
     too_long_todo_name = 'a' * 101
     fill_in 'todo', with: too_long_todo_name
     # when I click the add button
     click_button("Add")
     # I stay on the page
-    assert_current_path '/lists/0/todos'
+    assert_current_path '/lists/1/todos'
     # the input field will display my erronous todo name
     todo_name = find_field(id: 'todo').value
     assert_equal(too_long_todo_name, todo_name)
@@ -162,31 +162,31 @@ class ListAcceptTest < CapybaraTestCase
   def test_add_new_todo_form_has_cancel_button
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
-    visit '/lists/0'
+    visit '/lists/1'
     # I can enter a new todo
     too_long_todo_name = 'a' * 101
     fill_in 'todo', with: too_long_todo_name
     # when I click the add button
     click_button("Add")
     # I stay on the page
-    assert_current_path '/lists/0/todos'
+    assert_current_path '/lists/1/todos'
     # I can click the cancel link
     click_link('Cancel')
     # and be redirected to to list detail page
-    assert_current_path "/lists/0"
+    assert_current_path "/lists/1"
   end
 
   def test_delete_a_todo_from_list
     # setup
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
-    visit '/lists/0'
+    visit '/lists/1'
     # I can enter a new todo item
     fill_in 'todo', with: 'Book train'
     # when I click the add button
     click_button("Add")
     # I stay on the page
-    assert_current_path '/lists/0'
+    assert_current_path '/lists/1'
     # the todo is added to the list
     assert_content("Book train")
 
@@ -194,7 +194,7 @@ class ListAcceptTest < CapybaraTestCase
     click_button("Delete")
 
     # I am still on the same page
-    assert_current_path '/lists/0'
+    assert_current_path '/lists/1'
     # but my todo is deleted
 #    refute_content("Book train")  # AJAX trouble..
     # I get a succes message
@@ -205,20 +205,20 @@ class ListAcceptTest < CapybaraTestCase
     # setup
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
-    visit '/lists/0'
+    visit '/lists/1'
     # I can enter a new todo item
     fill_in 'todo', with: 'Book train'
     # when I click the add button
     click_button("Add")
     # I stay on the page
-    assert_current_path '/lists/0'
+    assert_current_path '/lists/1'
     # the todo is added to the list
     assert_content("Book train")
 
     # if I mark the todo completed
     click_button("Complete")
     # I will still be on the list detail page
-    assert_current_path '/lists/0'
+    assert_current_path '/lists/1'
     # the box is checked
     # and the task is greyed
     page.has_selector?('.complete')
@@ -230,13 +230,13 @@ class ListAcceptTest < CapybaraTestCase
     # setup
     # I have a list called Vacation (see setup)
     # if I am at the detail list page
-    visit '/lists/0'
+    visit '/lists/1'
     # I can enter a new todo item
     fill_in 'todo', with: 'Book train'
     # when I click the add button
     click_button("Add")
     # I stay on the page
-    assert_current_path '/lists/0'
+    assert_current_path '/lists/1'
     # the todo is added to the list
     assert_content("Book train")
 
@@ -244,7 +244,7 @@ class ListAcceptTest < CapybaraTestCase
     click_button("Complete")
     click_button("Complete")
     # I will still be on the list detail page
-    assert_current_path '/lists/0'
+    assert_current_path '/lists/1'
     # the box is checked
     # and the task is greyed
     refute page.has_selector?('.complete')
@@ -255,7 +255,7 @@ class ListAcceptTest < CapybaraTestCase
   def test_mark_all_todos_on_a_list_as_complete
     # setup
     # I have a list called Vacation (see setup)
-    visit '/lists/0'
+    visit '/lists/1'
     fill_in 'todo', with: 'Pack bags'
     click_button("Add")
     fill_in 'todo', with: 'Book hotel'
