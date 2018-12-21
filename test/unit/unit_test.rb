@@ -155,5 +155,16 @@ class UnitTest < CapybaraTestCase
     assert_current_path '/lists/0'
     assert_content("List 1")
   end
+
+  def test_todo_index_returns_index
+    my_list = { name: 'testlistA',
+                todos: [{ id: 1, name:'todo1a', completed: false },
+                        { id: 2, name:'todo2a', completed: true },
+                        { id: 3, name:'todo3a', completed: false }
+                       ]}
+
+    todo_id = 3
+    assert_equal(2, todo_index(my_list, todo_id))
+  end
 end
 

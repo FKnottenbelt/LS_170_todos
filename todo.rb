@@ -40,8 +40,8 @@ module Helpers
     complete_todos, incomplete_todos =
       todos.partition { |todo| todo[:completed] }
 
-    incomplete_todos.each { |todo| yield todo, todos.index(todo) }
-    complete_todos.each { |todo| yield todo, todos.index(todo) }
+    incomplete_todos.each &block
+    complete_todos.each &block
   end
 
 end
@@ -152,6 +152,11 @@ def error_for_todo_name(todo_name)
   end
 end
 
+def next_todo_id(todos)
+  max = todos.map { |todo| todo[:id] }.max || 0
+  max + 1
+end
+
 # Add new todo to list
 post '/lists/:list_index/todos' do
   @list_index = params[:list_index].to_i
@@ -163,8 +168,10 @@ post '/lists/:list_index/todos' do
     session[:error] = error
     erb :list_detail, layout: :layout
   else
-    session[:lists][@list_index][:todos] << { name: @new_todo_name ,
-                                             completed: false }
+    todo_id = next_todo_id(@list[:todos])
+    session[:lists][@list_index][:todos] << { id: todo_id,
+                                              name: @new_todo_name ,
+                                              completed: false }
     session[:success] = 'The list has been updated and Todo is added'
     redirect "/lists/#{@list_index}" # list_detail page
   end
@@ -178,10 +185,11 @@ get '/lists/:list_index/todos' do
 end
 
 # Delete existing todo
-post '/lists/:list_index/todos/:todo_index/delete' do
+post '/lists/:list_index/todos/:todo_id/delete' do
   @list_index = params[:list_index].to_i
-  todo_index = params[:todo_index].to_i
+  todo_id = params[:todo_id].to_i
   @list = load_list(@list_index)
+  todo_index = todo_index(@list, todo_id)
 
   @list[:todos].delete_at(todo_index)
 
@@ -193,14 +201,21 @@ post '/lists/:list_index/todos/:todo_index/delete' do
   end
 end
 
+def todo_index(list, todo_id)
+  selected_todo = list[:todos].select { |todo| todo[:id] == todo_id }.first
+  list[:todos].index(selected_todo)
+end
+
 # Update a todo completed status
-post '/lists/:list_index/todos/:todo_index/check' do
+post '/lists/:list_index/todos/:todo_id/check' do
   @list_index = params[:list_index].to_i
-  @todo_index = params[:todo_index].to_i
+  @todo_id = params[:todo_id].to_i
   @list = load_list(@list_index)
 
   is_completed = params[:completed] == 'true'
-  @list[:todos][@todo_index][:completed] = is_completed
+  todo_index = todo_index(@list, @todo_id)
+
+  @list[:todos][todo_index][:completed] = is_completed
   session[:success] = 'The todo status has been updated'
 
   redirect "/lists/#{@list_index}" # list_detail_page
