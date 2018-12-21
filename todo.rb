@@ -4,12 +4,20 @@ require 'sinatra/content_for'
 require 'sinatra/reloader' if development?
 require 'bundler/setup'
 
+############### setup ###############
+
 configure do
   enable :sessions
   set :session_secret, 'secret'
 
   set :erb, :escape_html => true
 end
+
+before do
+  session[:lists] ||= []
+end
+
+############### view helpers ###############
 
 module Helpers
   def count_remaining_todos(list)
@@ -50,9 +58,7 @@ helpers do
   include Helpers
 end
 
-before do
-  session[:lists] ||= []
-end
+############### helper methods ###############
 
 def load_list(list_index)
   list = session[:lists][list_index] if list_index &&
@@ -63,6 +69,34 @@ def load_list(list_index)
   redirect "/lists"
 end
 
+def error_for_list_name(list_name)
+  if !list_name.size.between?(1, 100)
+    'List name must by between 1 and 100 characters'
+  elsif session[:lists].any? { |list| list[:name] == list_name }
+    'List name must be unique'
+  end
+end
+
+def error_for_todo_name(todo_name)
+  if !todo_name.size.between?(1, 100)
+    'Todo name must by between 1 and 100 characters'
+  elsif session[:lists].any? { |list| list[:todos].include?(todo_name) }
+    'Todo name must be unique'
+  end
+end
+
+def next_todo_id(todos)
+  max = todos.map { |todo| todo[:id] }.max || 0
+  max + 1
+end
+
+def todo_index(list, todo_id)
+  selected_todo = list[:todos].select { |todo| todo[:id] == todo_id }.first
+  list[:todos].index(selected_todo)
+end
+
+############### routes ###############
+
 get '/' do
   redirect '/lists'
 end
@@ -71,14 +105,6 @@ end
 get '/lists' do
   @lists = session[:lists]
   erb :lists, layout: :layout
-end
-
-def error_for_list_name(list_name)
-  if !list_name.size.between?(1, 100)
-    'List name must by between 1 and 100 characters'
-  elsif session[:lists].any? { |list| list[:name] == list_name }
-    'List name must be unique'
-  end
 end
 
 # Create a new list
@@ -144,19 +170,6 @@ post '/lists/:list_index/delete' do
   end
 end
 
-def error_for_todo_name(todo_name)
-  if !todo_name.size.between?(1, 100)
-    'Todo name must by between 1 and 100 characters'
-  elsif session[:lists].any? { |list| list[:todos].include?(todo_name) }
-    'Todo name must be unique'
-  end
-end
-
-def next_todo_id(todos)
-  max = todos.map { |todo| todo[:id] }.max || 0
-  max + 1
-end
-
 # Add new todo to list
 post '/lists/:list_index/todos' do
   @list_index = params[:list_index].to_i
@@ -199,11 +212,6 @@ post '/lists/:list_index/todos/:todo_id/delete' do
     session[:success] = 'The todo has been deleted'
     redirect "/lists/#{@list_index}" # list_detail_page
   end
-end
-
-def todo_index(list, todo_id)
-  selected_todo = list[:todos].select { |todo| todo[:id] == todo_id }.first
-  list[:todos].index(selected_todo)
 end
 
 # Update a todo completed status
