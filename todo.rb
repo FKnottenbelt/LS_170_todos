@@ -40,8 +40,8 @@ module Helpers
     complete_lists, incomplete_lists =
       lists.partition { |list| list_complete?(list) }
 
-    incomplete_lists.each { |list| yield list, lists.index(list) }
-    complete_lists.each { |list| yield list, lists.index(list) }
+    incomplete_lists.each(&block)
+    complete_lists.each(&block)
   end
 
   def sort_todos(todos, &block)
@@ -100,6 +100,10 @@ def todo_index(list, todo_id)
   list[:todos].index(selected_todo)
 end
 
+def list_index(lists, list_id)
+  selected_list = lists.select { |list| list[:id] == list_id }.first
+  lists.index(selected_list)
+end
 ############### routes ###############
 
 get '/' do
@@ -115,6 +119,7 @@ end
 # Create a new list
 post '/lists' do
   new_list_name = params[:list_name].strip
+  @lists = session[:lists]
 
   error = error_for_list_name(new_list_name)
   if error
@@ -122,7 +127,7 @@ post '/lists' do
     erb :new_list, layout: :layout
   else
     list_id = next_list_id(session[:lists])
-    session[:lists] << { id: list_id, name: new_list_name, todos: [] }
+    @lists << { id: list_id, name: new_list_name, todos: [] }
     session[:success] = 'The list has been created'
     redirect '/lists'
   end
@@ -134,39 +139,41 @@ get '/lists/new' do
 end
 
 # View one list
-get '/lists/:list_index' do
-  @list_index = params[:list_index].to_i
-  @list = load_list(@list_index)
+get '/lists/:list_id' do
+  @list_id = params[:list_id].to_i
+  @list = load_list(@list_id)
   erb :list_detail, layout: :layout
 end
 
 # Edit existing list
-get '/lists/:list_index/edit' do
-  @list_index = params[:list_index].to_i
-  @list = load_list(@list_index)
+get '/lists/:list_id/edit' do
+  @list_id = params[:list_id].to_i
+  @list = load_list(@list_id)
   erb :edit_list, layout: :layout
 end
 
 # Update existing list
-post '/lists/:list_index' do
-  @list_index = params[:list_index].to_i
+post '/lists/:list_id' do
+  @list_id = params[:list_id].to_i
   new_list_name = params[:list_name].strip
+  @list = load_list(@list_id)
 
   error = error_for_list_name(new_list_name)
   if error
-    @list = @list = load_list(@list_index)
     session[:error] = error
     erb :edit_list, layout: :layout
   else
-    session[:lists][@list_index][:name] = new_list_name
+    @list[:name] = new_list_name
     session[:success] = 'The list has been updated'
-    redirect "/lists/#{@list_index}"
+    redirect "/lists/#{@list_id}"
   end
 end
 
 # Delete existing list
-post '/lists/:list_index/delete' do
-  session[:lists].delete_at(params[:list_index].to_i)
+post '/lists/:list_id/delete' do
+  @list_id = params[:list_id].to_i
+  @lists = session[:lists]
+  @lists.delete_at(list_index(@lists, @list_id))
 
   if env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'
     '/lists'

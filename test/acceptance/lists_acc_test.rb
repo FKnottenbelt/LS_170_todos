@@ -196,7 +196,7 @@ class ListAcceptTest < CapybaraTestCase
     # I am still on the same page
     assert_current_path '/lists/1'
     # but my todo is deleted
-#    refute_content("Book train")  # AJAX trouble..
+    refute_content("Book train")  # AJAX trouble..
     # I get a succes message
     assert_content("The todo has been deleted")
   end
