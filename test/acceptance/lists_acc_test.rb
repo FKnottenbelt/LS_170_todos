@@ -9,6 +9,10 @@ class ListAcceptTest < CapybaraTestCase
     click_button("Save")
   end
 
+  def test_acc_test_have_run
+    puts "Acc tests running"
+  end
+
   def test_homepage_redirects_to_lists
     # when I visit the homepage
     visit '/'

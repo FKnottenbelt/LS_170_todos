@@ -61,8 +61,7 @@ end
 ############### helper methods ###############
 
 def load_list(list_id)
-  found_list = session[:lists].find { |list| list[:id] == list_id } if list_id &&
-         session[:lists].find { |list| list[:id] == list_id }
+  found_list = session[:lists].find { |list| list[:id] == list_id }
   return found_list if found_list
 
   session[:error] = "The specified list was not found."
@@ -85,13 +84,8 @@ def error_for_todo_name(todo_name)
   end
 end
 
-def next_list_id(lists)
-  max = lists.map { |list| list[:id] }.max || 0
-  max + 1
-end
-
-def next_todo_id(todos)
-  max = todos.map { |todo| todo[:id] }.max || 0
+def next_id(collection)
+  max = collection.map { |item| item[:id] }.max || 0
   max + 1
 end
 
@@ -100,10 +94,6 @@ def todo_index(list, todo_id)
   list[:todos].index(selected_todo)
 end
 
-def list_index(lists, list_id)
-  selected_list = lists.select { |list| list[:id] == list_id }.first
-  lists.index(selected_list)
-end
 ############### routes ###############
 
 get '/' do
@@ -126,7 +116,7 @@ post '/lists' do
     session[:error] = error
     erb :new_list, layout: :layout
   else
-    list_id = next_list_id(session[:lists])
+    list_id = next_id(session[:lists])
     @lists << { id: list_id, name: new_list_name, todos: [] }
     session[:success] = 'The list has been created'
     redirect '/lists'
@@ -173,7 +163,7 @@ end
 post '/lists/:list_id/delete' do
   @list_id = params[:list_id].to_i
   @lists = session[:lists]
-  @lists.delete_at(list_index(@lists, @list_id))
+  @lists.reject! { |list| list[:id] == @list_id }
 
   if env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'
     '/lists'
@@ -194,7 +184,7 @@ post '/lists/:list_id/todos' do
     session[:error] = error
     erb :list_detail, layout: :layout
   else
-    todo_id = next_todo_id(@list[:todos])
+    todo_id = next_id(@list[:todos])
     @list[:todos] << { id: todo_id,
                        name: @new_todo_name ,
                        completed: false }
@@ -205,16 +195,16 @@ post '/lists/:list_id/todos' do
 end
 
 # Cancel adding todo
-get '/lists/:list_index/todos' do
-  index = params[:list_index].to_i
+get '/lists/:list_id/todos' do
+  index = params[:list_id].to_i
   redirect "/lists/#{index}"
 end
 
 # Delete existing todo
-post '/lists/:list_index/todos/:todo_id/delete' do
-  @list_index = params[:list_index].to_i
+post '/lists/:list_id/todos/:todo_id/delete' do
+  @list_id = params[:list_id].to_i
   todo_id = params[:todo_id].to_i
-  @list = load_list(@list_index)
+  @list = load_list(@list_id)
   todo_index = todo_index(@list, todo_id)
 
   @list[:todos].delete_at(todo_index)
@@ -223,7 +213,7 @@ post '/lists/:list_index/todos/:todo_id/delete' do
     status 204
   else
     session[:success] = 'The todo has been deleted'
-    redirect "/lists/#{@list_index}" # list_detail_page
+    redirect "/lists/#{@list_id}" # list_detail_page
   end
 end
 
@@ -243,14 +233,14 @@ post '/lists/:list_id/todos/:todo_id/check' do
 end
 
 # Complete all todos on a list
-post '/lists/:list_index/complete' do
-  @list_index = params[:list_index].to_i
-  @list = load_list(@list_index)
+post '/lists/:list_id/complete' do
+  @list_id = params[:list_id].to_i
+  @list = load_list(@list_id)
 
   @list[:todos].each do |todo|
       todo[:completed] = true
   end
 
   session[:success] = 'All todos have been marked completed'
-  redirect "/lists/#{@list_index}" # list_detail_page
+  redirect "/lists/#{@list_id}" # list_detail_page
 end
